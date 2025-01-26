@@ -1,55 +1,76 @@
-// Array of city objects, each with a name and population property
+// Initialize everything
+function initialize() {
+    createTable(cityPop); // Create the table
+    addColumns(cityPop); // Add columns
+    addEvents(); // Attach events
+}
+
+// Array of city objects
 var cityPop = [
-    {
-        city: "Madison",
-        population: 233209,
-    },
-    {
-        city: "Milwaukee",
-        population: 594833,
-    },
-    {
-        city: "Green Bay",
-        population: 104057,
-    },
-    {
-        city: "Superior",
-        population: 27244,
-    },
+    { city: "Madison", population: 233209 },
+    { city: "Milwaukee", population: 594833 },
+    { city: "Green Bay", population: 104057 },
+    { city: "Superior", population: 27244 },
 ];
 
-// Adds a new column to the table, indicating the size of the city based on population
+// Function to create the table dynamically
+function createTable(cityPop) {
+    const table = document.createElement("table");
+    const headerRow = document.createElement("tr");
+
+    // Create headers
+    headerRow.innerHTML = "<th>City</th><th>Population</th>";
+    table.appendChild(headerRow);
+
+    // Add city data
+    cityPop.forEach(city => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${city.city}</td><td>${city.population}</td>`;
+        table.appendChild(row);
+    });
+
+    // Append the table to the body
+    document.body.appendChild(table);
+}
+
+// Adds a new column to the table
 function addColumns(cityPop) {
-    // Loop through all table rows
-    document.querySelectorAll("tr").forEach(function (row, i) {
+    const rows = document.querySelectorAll("tr");
+
+    if (!rows.length) {
+        console.error("No rows found in the table.");
+        return;
+    }
+
+    rows.forEach(function (row, i) {
         if (i === 0) {
-            // For the first row (header), add a new column titled "City Size"
             row.insertAdjacentHTML("beforeend", "<th>City Size</th>");
         } else {
-            // For other rows, determine the city size based on population
-            let citySize;
+            let citySize = "Small";
 
-            if (cityPop[i - 1].population < 100000) {
-                citySize = "Small";
-            } else if (cityPop[i - 1].population < 500000) {
+            if (cityPop[i - 1].population >= 100000 && cityPop[i - 1].population < 500000) {
                 citySize = "Medium";
-            } else {
+            } else if (cityPop[i - 1].population >= 500000) {
                 citySize = "Large";
             }
 
-            // Add the city size to the corresponding row in the table
             row.insertAdjacentHTML("beforeend", `<td>${citySize}</td>`);
         }
     });
 }
 
-// Adds hover and click interactions to the table
+// Adds hover and click events
 function addEvents() {
-    // Add a hover interaction that changes the background color of the table
-    document.querySelector("table").addEventListener("mouseover", function () {
+    const table = document.querySelector("table");
+
+    if (!table) {
+        console.error("Table not found. Cannot add events.");
+        return;
+    }
+
+    table.addEventListener("mouseover", function () {
         let color = "rgb(";
 
-        // Generate random RGB color values
         for (let i = 0; i < 3; i++) {
             let random = Math.round(Math.random() * 255);
             color += random;
@@ -61,22 +82,14 @@ function addEvents() {
             }
         }
 
-        // Set the background color of the table to the generated color
-        document.querySelector("table").style.backgroundColor = color;
+        table.style.backgroundColor = color;
     });
 
-    // Add a click interaction that displays an alert message
-    function clickme() {
+    table.addEventListener("click", function () {
         alert("Hey, you clicked me!");
-    }
-
-    // Add the click event listener to the table
-    document.querySelector("table").addEventListener("click", clickme);
+    });
 }
 
-// Example usage: Call the functions when the page loads
-document.addEventListener("DOMContentLoaded", function () {
-    addColumns(cityPop); // Add the "City Size" column
-    addEvents(); // Add hover and click interactions to the table
-});
-document.addEventListener('DOMContentLoaded',initialize)
+
+// Run initialize when the DOM is ready
+document.addEventListener("DOMContentLoaded", initialize);
