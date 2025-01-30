@@ -3,6 +3,11 @@ function initialize() {
     createTable(cityPop); // Create the table
     addColumns(cityPop); // Add columns
     addEvents(); // Attach events
+    console.log("Table created. Now loading JSON data...");
+    
+    //Run the AJAX function
+    debugAjax()
+    
 }
 
 // Array of city objects
@@ -29,8 +34,8 @@ function createTable(cityPop) {
         table.appendChild(row);
     });
 
-    // Append the table to the body
-    document.body.appendChild(table);
+    // Append the table to the table container to make sure it loads before the JSON data
+    document.querySelector("#table-container").appendChild(table);
 }
 
 // Adds a new column to the table
@@ -90,6 +95,30 @@ function addEvents() {
     });
 }
 
-
 // Run initialize when the DOM is ready
-document.addEventListener("DOMContentLoaded", initialize);
+document.addEventListener("DOMContentLoaded", initialize)
+    
+
+//define debugCallback 
+function debugCallback(data) {
+    console.log("Received JSON data:", data); // Debugging
+
+    let myDiv = document.querySelector("#mydiv");
+
+    // Append the JSON data properly
+    myDiv.insertAdjacentHTML('beforeend', `<br><strong>GeoJSON data:</strong><br>${JSON.stringify(data)}`);
+}
+
+//define debugAjax function and fetch data
+function debugAjax() {
+    fetch("data/MegaCities.geojson")
+        .then(response => {
+            return response.json(); // Parse JSON
+        })
+        .then(data => {
+            debugCallback(data); // Pass parsed data to callback
+        })
+        .catch(error => console.error("Error fetching GeoJSON:", error));
+}
+
+
